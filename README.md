@@ -1,2 +1,6 @@
 # SmartClassRoom-FeatherClient
-Code for feather Micro Controller
+CirtuitPython for feather Micro Controller
+
+## Scope
+- Read data from sensors
+- Send results to Raspberry via Bluetooth

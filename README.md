@@ -1,5 +1,5 @@
 # SmartClassRoom-FeatherClient
-Circuit for feather Micro Controller
+CircuitPython code for feather Micro Controller
 
 ## Scope
 - Read data from sensors

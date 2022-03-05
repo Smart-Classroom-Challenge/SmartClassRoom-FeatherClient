@@ -3,10 +3,6 @@ import board
 import digitalio
 import time
 
-CLK_PIN = board.D5 # nRF5840 D5, Grove D2
-DATA_PIN = board.D6
-NUMBER_OF_LEDS = 1
-
 class ChainableLED():
     def __init__(self, clk_pin, data_pin, number_of_leds):
         self.__clk_pin = digitalio.DigitalInOut(clk_pin)

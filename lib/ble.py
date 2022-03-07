@@ -8,7 +8,7 @@ from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
 from adafruit_airlift.esp32 import ESP32
 
-class BLU():
+class BLE():
     def __init__(self):
         self.esp32 = ESP32(
             reset=board.D12,
@@ -18,9 +18,18 @@ class BLU():
             tx=board.TX,
             rx=board.RX,
         )
-        self.adapter = esp32.start_bluetooth()
-        self.ble = BLERadio(adapter)
+        self.adapter = self.esp32.start_bluetooth()
+        self.ble = BLERadio(self.adapter)
         self.uart = UARTService()
-        self.advertisement = ProvideServicesAdvertisement(uart)
+        self.advertisement = ProvideServicesAdvertisement(self.uart)
 
-
+    def setup_connection(self):
+        while True:
+            self.ble.start_advertising(self.advertisement)
+            print("-- waiting to connect BLE --")
+            while not self.ble.connected:
+                pass
+            print("-- connected BLE: --")
+            while self.ble.connected:
+                # Returns b'' if nothing was read.
+                print("-- Still connected --")

@@ -6,7 +6,11 @@ import digitalio
 import adafruit_dht
 import adafruit_scd30
 from rgbled import ChainableLED
-from blu import BLU
+from ble import BLE
+
+# Low Energy Bluetooth
+bluetooth = BLE()
+bluetooth.setup_connection()
 
 # Humidity and Temperature
 # D2 auf Shield, D5 auf Feather
@@ -29,21 +33,9 @@ A0 = analogio.AnalogIn(board.A0)
 # A2(D16) auf Shield und Feather
 A2 = ChainableLED(board.A2, board.A3, 1)
 
+
+
 counter = 1
-while True:
-    BLU.ble.start_advertising(advertisement)
-    print("waiting to connect")
-    while not BLU.ble.connected:
-        pass
-    print("connected: trying to read input")
-    while BLU.ble.connected:
-        # Returns b'' if nothing was read.
-        one_byte = uart.read(1)
-        if one_byte:
-            print(one_byte)
-            uart.write(one_byte)
-
-
 while True:
     print(" -- Loop " + str(counter) + " -- ")
     print("D2 Temperature: " + str(D2.temperature) + " °C")

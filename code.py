@@ -8,10 +8,6 @@ import adafruit_scd30
 from rgbled import ChainableLED
 from ble_interface import BLEConnection
 
-# Humidity and Temperature
-# D2 auf Shield, D5 auf Feather
-D2 = adafruit_dht.DHT11(board.D5)
-
 # CO2, Humidity and Temperature
 # I2C-1 auf Shield, D23 auf Feather
 I2C1 = adafruit_scd30.SCD30(board.I2C())
@@ -30,41 +26,43 @@ A0 = analogio.AnalogIn(board.A0)
 A2 = ChainableLED(board.A2, board.A3, 1)
 
 ble_connection = BLEConnection()
-ble_connection.ble.start_advertising(ble_connection.advertisement)
-
-counter = 1
-
 
 while True:
+    ble_connection.ble.start_advertising(ble_connection.advertisement)
+    turn = True
     while not ble_connection.ble.connected:
-        pass
-    while ble_connection.ble.connected:
-        # Returns b'' if nothing was read.
-        one_byte = ble_connection.uart.read(1)
-        if one_byte:
-            print(one_byte)
-            ble_connection.uart.write(one_byte)
 
-while True:
-    print(" -- Loop " + str(counter) + " -- ")
-    print("D2 Temperature: " + str(D2.temperature) + " °C")
-    print("D2 Humidity: " + str(D2.humidity) + " %%rH")
-    print()
-    print("I2C1 Temperature: " + str(I2C1.temperature) + " °C")
-    print("I2C1 Humidity: " + str(I2C1.relative_humidity) + " %%rH")
-    print("I2C1 CO2: " + str(I2C1.CO2) + " PPM")
-    print()
-    print("D4 Motion: " + str(D4.value))
-    print()
-    print("A0 Light: " + str(A0.value)) # Wertebereich: 0 - ca. 46500
-    print()
-    print("Lightshow!!!")
-    steps = 5 # longer steps -> shorter cycles
-    for i in range(0, 256, steps):   A2.setColorRGB(  i, 255,   0)
-    for i in range(255, -1, -steps): A2.setColorRGB(255,   i,   0)
-    for i in range(0 ,256, steps):   A2.setColorRGB(255,   0,   i)
-    for i in range(255, -1, -steps): A2.setColorRGB(  i,   0, 255)
-    for i in range(0, 256, steps):   A2.setColorRGB(  0,   i, 255)
-    for i in range(255, -1, -steps): A2.setColorRGB(  0, 255,   i)
-    counter +=1
-    print()
+        # Indicatior -> BL not connected
+        if turn:
+            A2.setColorRGB(0, 10, 10)
+            turn = False
+        else:
+            A2.setColorRGB(10, 0, 10)
+            turn = True
+        time.sleep(1.5)
+
+    while ble_connection.ble.connected:
+
+        # Reading values
+        CO2 = int(I2C1.CO2)
+        TEMP = int(I2C1.temperature)
+        HUMIDITY = int(I2C1.relative_humidity)
+        MOTION = bool(D4.value)
+        LIGHT = int(A0.value)
+        print(CO2, TEMP, HUMIDITY, MOTION, LIGHT)
+
+        dimming_level = 20
+        # LED CO2 Stand
+        if CO2 < 600:       A2.setColorRGB(                          0,                    255//dimming_level, 0)
+        elif CO2 < 855:     A2.setColorRGB( (CO2 - 600)//dimming_level,                    255//dimming_level, 0)
+        elif CO2 < 1110:    A2.setColorRGB(         255//dimming_level,    (255 - (CO2 - 855))//dimming_level, 0)
+        else:               A2.setColorRGB(         255//dimming_level,                                     0, 0)
+
+        # Sending Data
+        ble_connection.uart.write("CO2:" + str(CO2) + ":PPM;")
+        ble_connection.uart.write("TEM:" + str(TEMP) + ":°C;")
+        ble_connection.uart.write("HUM:" + str(HUMIDITY) + ":%%rH;")
+        ble_connection.uart.write("MOT:" + str(MOTION) + ":BOOL;")
+        ble_connection.uart.write("LIG:" + str(LIGHT) + ":NUM")
+        ble_connection.uart.write("\n")
+        time.sleep(1)

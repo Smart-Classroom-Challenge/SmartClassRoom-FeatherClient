@@ -45,8 +45,8 @@ while True:
 
         # Reading values
         CO2 = int(I2C1.CO2)
-        TEMP = int(I2C1.temperature)
-        HUMIDITY = int(I2C1.relative_humidity)
+        TEMP = int(I2C1.temperature * 100)
+        HUMIDITY = int(I2C1.relative_humidity * 100)
         MOTION = bool(D4.value)
         LIGHT = int(A0.value)
         print(CO2, TEMP, HUMIDITY, MOTION, LIGHT)
@@ -60,9 +60,8 @@ while True:
 
         # Sending Data
         ble_connection.uart.write("CO2:" + str(CO2) + ":PPM;")
-        ble_connection.uart.write("TEM:" + str(TEMP) + ":°C;")
+        ble_connection.uart.write("TEM:" + str(TEMP) + ":C;")
         ble_connection.uart.write("HUM:" + str(HUMIDITY) + ":%%rH;")
         ble_connection.uart.write("MOT:" + str(MOTION) + ":BOOL;")
-        ble_connection.uart.write("LIG:" + str(LIGHT) + ":NUM")
-        ble_connection.uart.write("\n")
-        time.sleep(1)
+        ble_connection.uart.write("LIG:" + str(LIGHT) + ":NUM;")
+        time.sleep(5)

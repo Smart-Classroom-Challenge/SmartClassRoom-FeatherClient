@@ -53,10 +53,9 @@ while True:
 
         dimming_level = 20
         # LED CO2 Stand
-        if CO2 < 600:       A2.setColorRGB(                          0,                    255//dimming_level, 0)
-        elif CO2 < 855:     A2.setColorRGB( (CO2 - 600)//dimming_level,                    255//dimming_level, 0)
-        elif CO2 < 1110:    A2.setColorRGB(         255//dimming_level,    (255 - (CO2 - 855))//dimming_level, 0)
-        else:               A2.setColorRGB(         255//dimming_level,                                     0, 0)
+        if CO2 < 700:        A2.setColorRGB(                  0, 255//dimming_level, 0)
+        elif CO2 < 1000:     A2.setColorRGB( 255//dimming_level, 255//dimming_level, 0)
+        else:                A2.setColorRGB( 255//dimming_level,                  0, 0)
 
         # Sending Data
         ble_connection.uart.write("CO2:" + str(CO2) + ":PPM;")

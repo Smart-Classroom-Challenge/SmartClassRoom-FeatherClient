@@ -51,12 +51,12 @@ while True:
         LIGHT = int(A0.value)
         print(CO2, TEMP, HUMIDITY, MOTION, LIGHT)
 
-        dimming_level = 4
+        dimming_level = 3
         # LED CO2 Stand
-        if CO2 < 800:        A2.setColorRGB(  0 //dimming_level, 255//dimming_level,   0//dimming_level)
-        elif CO2 < 1000:     A2.setColorRGB( 127//dimming_level, 255//dimming_level,   0//dimming_level)
-        elif CO2 < 1400:     A2.setColorRGB( 255//dimming_level, 255//dimming_level,   0//dimming_level)
-        else:                A2.setColorRGB( 255//dimming_level,   0//dimming_level,   0//dimming_level)
+        if CO2 < 800:        A2.setColorRGB(  0 //dimming_level, 255//dimming_level,   0//dimming_level) # green
+        elif CO2 < 1000:     A2.setColorRGB( 255//dimming_level, 240//dimming_level,   0//dimming_level) # yellow
+        elif CO2 < 1400:     A2.setColorRGB( 255//dimming_level, 111//dimming_level,   0//dimming_level) # orange 
+        else:                A2.setColorRGB( 255//dimming_level,   0//dimming_level,   0//dimming_level) # red
 
         # Sending Data
         ble_connection.uart.write("CO2:" + str(CO2) + ":PPM;")

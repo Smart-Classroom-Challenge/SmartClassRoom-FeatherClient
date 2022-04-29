@@ -1,4 +1,3 @@
-# Write your code here :-)
 import time
 import board
 import analogio

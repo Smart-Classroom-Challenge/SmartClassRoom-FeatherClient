@@ -1,4 +1,4 @@
-# SmartClassRoom-FeatherClient
+# SmartClassRoom-FeatherClient 🪶
 CircuitPython code for feather Micro Controller
 
 ## Scope
